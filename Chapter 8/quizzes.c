@@ -28,12 +28,14 @@ int main(void)
     for (int i = 1; i <= STUDENTS; i++) {
         student[i][1] += student[i][0] / ((double) STUDENTS);
         quiz[i][0] /= ((double) QUIZZES);
-        printf("Student %d (total/average): %.2lf/%.2lf", i,
-                student[i][0], student[i][1]);
-        printf("\t\t");
-        printf("Quiz %d (average/highest/lowest): %.2lf/%.2lf/%.2lf",
-                i, quiz[i][0], quiz[i][1], quiz[i][2]);
-        printf("\n");
+        printf("Student %d (total/average):\n");
+        printf("\t%.2lf/%.2lf\n",
+               i, student[i][0], student[i][1]);
+    }
+    for (int j = 1; j <= QUIZZES; j++) {
+        printf("Quiz %d (average/highest/lowest):\n");
+        printf("\t%.2lf/%.2lf/%.2lf\n",
+                j, quiz[j][0], quiz[j][1], quiz[j][2]);
     }
 
     return 0;
