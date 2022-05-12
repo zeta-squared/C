@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define MAX_CH 80
+#define MAX_CH 200
 
 int main(void)
 {
@@ -25,6 +25,7 @@ int main(void)
         }
         putchar(message[i]);
     }
+    printf(":%d", shift);
     putchar('\n');
 
     return 0;
