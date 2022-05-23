@@ -23,7 +23,7 @@ int main(void)
 void max_min(int a[], int n, int *max, int *min)
 {
     int *p;
-    *max = *min = *p;
+    *max = *min = *a;
     for (p = a; p < a + n; p++) {
         if (*p > *max )
             *max = *p;
