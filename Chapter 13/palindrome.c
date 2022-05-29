@@ -13,10 +13,13 @@ int main(void)
     do {
         scanf("%s", word);
         strcat(message, word);
-        printf("%s\n", message);
     } while (getchar() != '\n');
 
     message[strlen(message) - 1] = '\0';
+    if (is_palindrome(message))
+        printf("Palindrome\n");
+    else
+        printf("Not a palindrome\n");
 
     return 0;
 }
