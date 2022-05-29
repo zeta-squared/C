@@ -7,15 +7,17 @@ bool is_palindrome(const char *message);
 
 int main(void)
 {
-    char word[46], message[501];
+    int i = 0;
+    char word[46], message[501], ch;
 
     printf("Enter a message: ");
-    do {
-        scanf("%s", word);
-        strcat(message, word);
-    } while (getchar() != '\n');
+    while ((ch = getchar()) != '\n' && ch != '\?' && ch != '.') {
+        if (ch == ',' || ch == '\'' || ch == ' ')
+            continue;
+        message[i++] = ch;
+    }
 
-    message[strlen(message) - 1] = '\0';
+    message[i] = '\0';
     if (is_palindrome(message))
         printf("Palindrome\n");
     else
@@ -29,7 +31,7 @@ bool is_palindrome(const char *message)
     const char *p = &message[strlen(message) - 1];
 
     for (; *message != '\0'; message++, p--)
-        if (*p != *message)
+        if (tolower(*p) != tolower(*message))
             return false;
 
     return true;
