@@ -20,20 +20,20 @@ int main(void)
 
 void reverse_name(char *name)
 {
-    int i = 0;
+    int i, j = 0;
     char initial[] = ",  .", new_name[51];
 
     initial[2] = toupper(*name);
-    for (; *name != ' '; name++)
+    for (i = 0; name[i] != ' '; i++)
         ;
 
-    name++;
-    while (*name)
-        new_name[i++] = *name++;
+    while (name[++i])
+        new_name[j++] = name[i];
 
-    new_name[i] = *name;
-    printf("%s\n", new_name);
+    new_name[j] = name[i];
+    new_name[0] = toupper(new_name[0]);
     strcpy(name, new_name);
+    strcat(name, initial);
     
     return;
 }
