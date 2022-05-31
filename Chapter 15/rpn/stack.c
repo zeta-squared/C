@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include "stack.h"
 
 #define STACK_SIZE 100
@@ -23,15 +26,28 @@ bool is_full(void)
 void push(int i)
 {
     if (is_full())
-        return;
-    else
+        stack_overflow();
+    else {
         contents[top++] = i;
+    }
 }
 
 int pop(void)
 {
     if (is_empty())
-        return top;
+        stack_underflow();
     else
         return contents[--top];
+}
+
+void stack_overflow(void)
+{
+    printf("\nExpression is too complex\n");
+    exit(EXIT_FAILURE);
+}
+
+void stack_underflow(void)
+{
+    printf("\nNot enough operands in expression\n");
+    exit(EXIT_FAILURE);
 }
