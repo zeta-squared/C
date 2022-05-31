@@ -26,6 +26,6 @@ void write_line(void);
  * flush_line: Writes the current line without justification. If the line is  *
  *             empty, does nothing.                                           *
  ******************************************************************************/
-void flush_lines(void);
+void flush_line(void);
 
 #endif
