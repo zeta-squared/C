@@ -8,11 +8,12 @@
 #define MAX_PARTS 100
 
 /* function declerations */
-int find_part(struct part inventory[], int num_parts, int number);
+int find_part(const struct part inventory[], int num_parts, int number);
 void insert(struct part inventory[], int *num_parts);
-void search(struct part inventory[], int num_parts);
+void search(const struct part inventory[], int num_parts);
 void update(struct part inventory[], int num_parts);
-void print(struct part inventory[], int num_parts);
+void pricing(struct part inventory[], int num_parts);
+void print(const struct part inventory[], int num_parts);
 
 /******************************************************************************
  * main: Prompts the user to enter an operation code, then calls a function   *
@@ -35,6 +36,7 @@ int main(void)
             case 'i': insert(inventory, &num_parts); break;
             case 's': search(inventory, num_parts); break;
             case 'u': update(inventory, num_parts); break;
+            case 'd': pricing(inventory, num_parts); break;
             case 'p': print(inventory, num_parts); break;
             case 'q': return 0;
             default: printf("Illegal code\n");
@@ -47,7 +49,7 @@ int main(void)
  * find_part: Looks up a part number in the inventory array. Returns the      *
  *            array index if the part number is found; otherwise, returns -1. *
  ******************************************************************************/
-int find_part(struct part inventory[], int num_parts, int number)
+int find_part(const struct part inventory[], int num_parts, int number)
 {
     int i;
 
@@ -81,10 +83,10 @@ void insert(struct part inventory[], int *num_parts)
     inventory[*num_parts].number = part_number;
     printf("Enter part name: ");
     read_line(inventory[*num_parts].name, NAME_LEN);
+    printf("Enter the price per unit: ");
+    scanf("%lf", &inventory[*num_parts].price);
     printf("Enter quantity on hand: ");
     scanf("%d", &inventory[*num_parts].on_hand);
-    printf("Part number: %d\nPart name: %s\nQuantity on hand: %d\n",
-            inventory[*num_parts].number, inventory[*num_parts].name, inventory[*num_parts].on_hand);
     (*num_parts)++;
     quicksort(inventory, 0, *num_parts - 1);
 }
@@ -94,7 +96,7 @@ void insert(struct part inventory[], int *num_parts)
  *         the database. If the part exists, prints the name and quantity on  *
  *         hand; if not, prints an error message.                             *
  ******************************************************************************/
-void search(struct part inventory[], int num_parts)
+void search(const struct part inventory[], int num_parts)
 {
     int i, number;
 
@@ -103,6 +105,7 @@ void search(struct part inventory[], int num_parts)
     i = find_part(inventory, num_parts, number);
     if (i >= 0) {
         printf("Part name: %s\n", inventory[i].name);
+        printf("Price per unit: %.2lf\n", inventory[i].price);
         printf("Quantity on hand: %d\n", inventory[i].on_hand);
     } else
         printf("Part not found.\n");
@@ -129,16 +132,37 @@ void update(struct part inventory[], int num_parts)
 }
 
 /******************************************************************************
+ * pricing: Prompts the user to enter a part number. Prints an error message  *
+ *          if the part doesn't exist; otherwise, prompts the user to enter   *
+ *          a new price per unit and updates the database.                    *
+ ******************************************************************************/
+void pricing(struct part inventory[], int num_parts)
+{
+    int i, number;
+    double change;
+    
+    printf("Enter part: ");
+    scanf("%d", &number);
+    i = find_part(inventory, num_parts, number);
+    if (i >= 0) {
+        printf("Enter new price per unit: ");
+        scanf("%lf", &change);
+        inventory[i].price = change;
+    } else
+        printf("Part not found.\n");
+}
+
+/******************************************************************************
  * print: Prints a listing of all parts in the database, showing the part     *
  *        number, part name, and quantity on hand. Parts are printed in the   *
  *        order in which they were entered into the database.                 *
  ******************************************************************************/
-void print(struct part inventory[], int num_parts)
+void print(const struct part inventory[], int num_parts)
 {
     int i;
 
-    printf("Part Number   Part Name                Quantity on Hand\n");
+    printf("Part Number   Part Name                Price   Quantity on Hand\n");
     for (i = 0; i < num_parts; i++)
-        printf("%7d       %-25s%11d\n", inventory[i].number, inventory[i].name,
-                inventory[i].on_hand);
+        printf("%7d       %-25s$%4.2lf%17d\n", inventory[i].number,
+                inventory[i].name, inventory[i].price, inventory[i].on_hand);
 }
