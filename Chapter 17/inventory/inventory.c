@@ -17,6 +17,7 @@ struct part *inventory = NULL;  /* points to first part */
 
 struct part *find_part(int number);
 void insert(void);
+void erase(void);
 void search(void);
 void update(void);
 void print(void);
@@ -38,6 +39,7 @@ int main(void)
             ;
         switch (code) {
             case 'i': insert(); break;
+            case 'e': erase(); break;
             case 's': search(); break;
             case 'u': update(); break;
             case 'p': print(); break;
@@ -105,6 +107,35 @@ void insert(void)
         inventory = new_node;
     else
         prev->next = new_node;
+}
+
+/******************************************************************************
+ * erase: Prompts the user to enter a part number. Prints an error message    *
+ *        if the part doesn't exist; otherwise, erases the part from the      *
+ *        database.                                                           *
+ ******************************************************************************/
+void erase(void)
+{
+    struct part *cur, *prev;
+    int part_number;
+
+    printf("Enter part number: ");
+    scanf("%d", &part_number);
+
+    for (prev = NULL, cur = inventory;
+            cur != NULL && cur->number != part_number;
+            prev = cur, cur = cur->next)
+        ;
+
+    if (cur == NULL)
+        printf("Part does not exist in database.\n");
+    else if (prev == NULL) {
+        inventory = inventory->next;
+        free(cur);
+    } else {
+        prev->next = cur->next;
+        free(cur);
+    }
 }
 
 /******************************************************************************
