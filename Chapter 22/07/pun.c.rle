@@ -1,11 +1,14 @@
-/
-/ Name: pun.c
-/ Purpose: Prints a bad pun
-/ Author: Zeaiter Zeaiter
-/
-#include<stdio.h>
-int main(void) / Begining of main program
+/
+// Name: pun.c
+// Purpose: Prints a bad pun
+// Author: Zeaiter Zeaiter
+//
+
+#include<stdio.h>
+
+int main(void) // Beginning of main program
 {
 	printf("To C, or not the C: that is the question.\n");
 	return 0;
 }
+

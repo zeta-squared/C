@@ -4,42 +4,44 @@
 
 int main(int argc, char *argv[])
 {
-    unsigned char count;
-    long int position;
-    char *filename;
-    FILE *fp, *wp;
-    unsigned char byte, next_byte;
+    char *file;
+    long int pos;
+    FILE *fpin, *fpout;
+    unsigned char ch, next_ch, count;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: compress_file filename\n");
         exit(EXIT_FAILURE);
     }
 
-    if ((fp = fopen(argv[1], "rb")) == NULL) {
+    if ((fpin = fopen(argv[1], "rb")) == NULL) {
         fprintf(stderr, "Error: cannot open file %s\n", argv[1]);
         exit(EXIT_FAILURE);
     }
 
-    filename = malloc(strlen(argv[1]) + 5);
-    sprintf(filename, "%s.rle", argv[1]);
-    if ((wp = fopen(filename, "wb+")) == NULL) {
-        fprintf(stderr, "Error: cannot create file %s\n", filename);
+    file = malloc(strlen(argv[1]) + 4);
+    strcpy(file, argv[1]);
+    strcat(file, ".rle");
+
+    if ((fpout = fopen(file, "wb+")) == NULL) {
+        fprintf(stderr, "Error: could not create new file.\n");
         exit(EXIT_FAILURE);
     }
 
-    while(fread(&byte, sizeof(unsigned char), 1, fp) > 0) {
+    free(file);
+    while ((fread(&ch, sizeof(unsigned char), 1, fpin)) > 0) {
         count = 1;
-        position = ftell(fp);
-        while (fread(&next_byte, sizeof(unsigned char), 1, fp) > 0 &&\
-                byte == next_byte)
+        pos = ftell(fpin);
+        while ((fread(&ch, sizeof(unsigned char), 1, fpin)) > 0 && \
+                    ch == next_ch)
             count++;
-        fwrite(&count, sizeof(unsigned char), 1, wp);
-        fwrite(&byte, sizeof(unsigned char), 1, wp);
-        fseek(fp, position + count - 1, SEEK_SET);
+        fwrite(&count, sizeof(unsigned char), 1, fpout);
+        fwrite(&ch, sizeof(unsigned char), 1, fpout);
+        fseek(fpin, pos + count - 1, SEEK_SET);
     }
 
-    fclose(fp);
-    fclose(wp);
+    fclose(fpin);
+    fclose(fpout);
 
     return 0;
 }
