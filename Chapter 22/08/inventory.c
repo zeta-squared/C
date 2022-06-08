@@ -167,7 +167,6 @@ void dump(void)
         return;
     }
 
-    fwrite(&num_parts, sizeof(int), 1, fp);
     fwrite(inventory, sizeof(struct part), num_parts, fp);
     fclose(fp);
 
@@ -192,8 +191,7 @@ void restore(void)
         return;
     }
 
-    fread(&num_parts, sizeof(int), 1, fp);
-    fread(inventory, sizeof(struct part), num_parts, fp);
+    num_parts = fread(inventory, sizeof(struct part), MAX_PARTS, fp);
     fclose(fp);
 
     return;

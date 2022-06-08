@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NAME_LEN 25;
-#define MAX_PARTS 100;
+#define NAME_LEN 25
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +13,7 @@ int main(int argc, char *argv[])
     } part1, part2;
 
     FILE *fpin1, *fpin2, *fpout;
-    int num_parts[2], i, j;
+    int fp1_read, fp2_read;
 
     if (argc != 4) {
         fprintf(stderr, "Usage: merge filename1 filename2 output_file\n");
@@ -36,10 +35,20 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    for (;(fread(&part1, sizeof(part1), 1, fpin1)) == 1 && \
-            (fread(&part2, sizeof(part2), 1, fpin2)) == 1; ) {
-        /* check if the two parts have the same part number */
-        if (part1.number == part2.number) {
+    fp1_read = fread(&part1, sizeof(part1), 1, fpin1);
+    fp2_read = fread(&part2, sizeof(part2), 1, fpin2);
+    while (fp1_read == 1 && fp2_read == 1) {
+#ifdef DEBUG
+        printf("%d %s\n", part1.number, part1.name);
+        printf("%d %s\n", part2.number, part2.name);
+#endif
+        if (part1.number > part2.number) {
+            fwrite(&part2, sizeof(part2), 1, fpout);
+            fp2_read = fread(&part2, sizeof(part2), 1, fpin2);
+        } else if (part1.number < part2.number) {
+            fwrite(&part1, sizeof(part1), 1, fpout);
+            fp1_read = fread(&part1, sizeof(part1), 1, fpin1);
+        } else {
             // if the two parts have identical part numbers make sure the
             // part names match
             if (strcmp(part1.name, part2.name) != 0) {
@@ -50,8 +59,24 @@ int main(int argc, char *argv[])
             }
             part1.on_hand += part2.on_hand;
             fwrite(&part1, sizeof(part1), 1, fpout);
-        } else if (part1.number < part2.number) {
-        } else {
+            fp1_read = fread(&part1, sizeof(part1), 1, fpin1);
+            fp2_read = fread(&part2, sizeof(part2), 1, fpin2);
         }
     }
+
+    while (fp1_read == 1) {
+        fwrite(&part1, sizeof(part1), 1, fpout);
+        fp1_read = fread(&part1, sizeof(part1), 1, fpin1);
+    }
+
+    while (fp2_read == 1) {
+        fwrite(&part2, sizeof(part2), 1, fpout);
+        fp2_read = fread(&part2, sizeof(part2), 1, fpin2);
+    }
+
+    fclose(fpin1);
+    fclose(fpin2);
+    fclose(fpout);
+
+    return 0;
 }
