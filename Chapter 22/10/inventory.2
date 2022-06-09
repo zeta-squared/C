@@ -216,10 +216,11 @@ void dump(void)
         return;
     }
 
-    for (prev = NULL; inventory != NULL; \
-            prev = inventory, inventory = inventory->next) {
-        fwrite(inventory, sizeof(struct part) - sizeof(struct part *), 1, fp);
+    for (prev = NULL; inventory != NULL; prev = NULL, inventory = inventory->next) {
         free(prev);
+        fwrite(&inventory->number, sizeof(inventory->number), 1, fp);
+        fwrite(&inventory->name, sizeof(inventory->name), 1, fp);
+        fwrite(&inventory->on_hand, sizeof(inventory->on_hand), 1, fp);
     }
 
     fclose(fp);
@@ -251,7 +252,9 @@ void restore(void)
         return;
     }
     inventory = new_node;
-    while ((fread(new_node, sizeof(struct part) - sizeof(struct part *), 1, fp)) == 1) {
+    while ((fread(&new_node->number, sizeof(new_node->number), 1, fp)) == 1) {
+        fread(&new_node->name, sizeof(new_node->name), 1, fp);
+        fread(&new_node->on_hand, sizeof(new_node->on_hand), 1, fp);
         if (prev != NULL)
             prev->next = new_node;
         prev = new_node;
